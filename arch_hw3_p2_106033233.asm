@@ -25,6 +25,16 @@ li $v0, 5
 syscall
 addi $s1, $v0, 0
 
+addi $a0, $s0, 0
+addi $a1, $s1, 0
+jal Fn
+la $a0, ans
+li $v0, 4
+syscall
+addi $a0, $v1, 0
+li $v0, 1
+syscall
+
 j Exit
 
 Fn:
@@ -76,7 +86,7 @@ sw $s0, 12($sp)
 
 # 2 * fn(x, y - 1)
 addi $a1, $a1, -1
-jal $ra
+jal Fn
 lw $s2, 20($sp) # Third Call fn recursive
 lw $s1, 16($sp) # Second Call fn recursive
 lw $s0, 12($sp) # First Call fn recursive
@@ -90,7 +100,7 @@ sw $s1, 16($sp)
 # fn(x - 1, y - 1)
 addi $a0, $a0, -1
 addi $a1, $a1, -1
-jal $ra
+jal Fn
 lw $s2, 20($sp) # Third Call fn recursive
 lw $s1, 16($sp) # Second Call fn recursive
 lw $s0, 12($sp) # First Call fn recursive
