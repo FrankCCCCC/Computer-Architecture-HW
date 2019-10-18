@@ -153,65 +153,81 @@ addi $sp, $sp, 24 # Delete Stack
 jr $ra
 
 Re:
-	addi $sp, $sp, -12
-	sw $s1, 8($sp) # Save $s1, as Re(x - 2)
-	sw $s0, 4($sp) # Save $s0, as Re(x - 1)
-	sw $a0, 0($sp) # Save $a0 as int x
+	addi $sp, $sp, -16
+	sw $s1, 12($sp) # Save $s1, as Re(x - 2)
+	sw $s0, 8($sp) # Save $s0, as Re(x - 1)
+	sw $a0, 4($sp) # Save $a0 as int x
+	sw $ra, 0($sp) # Save $ra Return Address
 	addi $t1, $zero, 2
 	slt $t0, $a0, $t1
 	beq $t0, 1, re_cond1
 	
 	re_cond0:
-		addi $t3, $a0, 0
+		# addi $t3, $a0, 0
 		# Test
-		la $a0, testCond0
-		li $v0, 4
-		syscall
+		# la $a0, testCond0
+		# li $v0, 4
+		# syscall
 		
 		# Calculate Re(n-1)
-		addi $a0, $t3, 0
+		# addi $a0, $t3, 0
 		addi $a0, $a0, -1
 		
 		# Print Int
-		li $v0, 1
-		syscall
+		# li $v0, 1
+		# syscall
 		
 		jal Re
-		lw $a0, 0($sp)
+		lw $s1, 12($sp)
+		lw $s0, 8($sp)
+		lw $a0, 4($sp)
+		lw $ra, 0($sp)
 		addi $s0, $v1, 0
-		sw $s0, 4($sp)
+		sw $s0, 8($sp)
 		
 		# Print Res
 		# addi $t3, $a0, 0
-		la $a0, sep
-		li $v0, 4
-		syscall
-		addi $a0, $v1, 0
-		li $v0, 1
-		syscall
-		addi $a0, $t3, 0
+		# la $a0, sep
+		# li $v0, 4
+		# syscall
+		# addi $a0, $v1, 0
+		# li $v0, 1
+		# syscall
+		# addi $a0, $t3, 0
 		#####################
-		addi $t4, $a0, 0
+		# addi $t4, $a0, 0
 		# Test
-		la $a0, testCond1
-		li $v0, 4
-		syscall
+		# la $a0, testCond1
+		# li $v0, 4
+		# syscall
 		
 		# Calculate Re(n-2)
-		addi $a0, $t4, 0
+		# addi $a0, $t4, 0
 		addi $a0, $a0, -2
 		
 		# Print Int
-		li $v0, 1
-		syscall
+		# li $v0, 1
+		# syscall
 		
 		jal Re
-		lw $a0, 0($sp)
+		# Print Res
+		# addi $t3, $a0, 0
+		# la $a0, sep
+		# li $v0, 4
+		# syscall
+		# addi $a0, $v1, 0
+		# li $v0, 1
+		# syscall
+		# addi $a0, $t3, 0 # ---
+		lw $s1, 12($sp)
+		lw $s0, 8($sp)
+		lw $a0, 4($sp)
+		lw $ra, 0($sp)
 		addi $s1, $v1, 0
-		sw $s1, 8($sp)
+		sw $s1, 12($sp)
 		
-		lw $s0, 4($sp)
-		lw $s1, 8($sp)
+		lw $s0, 8($sp)
+		lw $s1, 12($sp)
 		mul $t1, $a0, $a0 # $t1 = x * x
 		mul $t2, $a0, $s0 # $t2 = x * re(x - 1)
 		add $t3, $t3, -1  # $t3 = (x - 1)
@@ -230,9 +246,10 @@ Re:
 				addi $v1, $zero, 0
 			j re_return
 	re_return:
-	lw $s1, 8($sp) # Save $s1, as Re(x - 2)
-	lw $s0, 4($sp) # Save $s0, as Re(x - 1)
-	lw $a0, 0($sp) # Save $a0 as int x
-	addi $sp, $sp, 12
+	lw $s1, 12($sp) # Save $s1, as Re(x - 2)
+	lw $s0, 8($sp) # Save $s0, as Re(x - 1)
+	lw $a0, 4($sp) # Save $a0 as int x
+	sw $ra, 0($sp) # Save $ra Return Address
+	addi $sp, $sp, 16
 	jr $ra
 Exit:
