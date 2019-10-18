@@ -7,6 +7,9 @@ cond0:		.asciiz "cond0 x <= 0"
 cond1:		.asciiz "cond1 y <= 0"
 cond2:		.asciiz "cond2 x > y"
 cond3:		.asciiz "cond3 else fn recursive"
+testCond0:	.asciiz "TestCond0 "
+testCond1:	.asciiz "TestCond1 "
+sep:		.asciiz ":"
 .text
 
 # Scan input a variable
@@ -29,12 +32,25 @@ li $v0, 5
 syscall
 addi $s1, $v0, 0
 
-# Test re functiom
-
 # Test Fn functiom
 addi $a0, $s0, 0
 addi $a1, $s1, 0
 jal Fn
+la $a0, ans
+li $v0, 4
+syscall
+addi $a0, $v1, 0
+li $v0, 1
+syscall
+
+# Newline
+la $a0, newline
+li $v0, 4
+syscall
+
+# Test re functiom
+addi $a0, $s0, 0
+jal Re
 la $a0, ans
 li $v0, 4
 syscall
@@ -67,29 +83,29 @@ j Cond3
 
 Cond0:
 	addi $v1, $zero, 0
-	la $a0, cond0
-	li $v0, 4
-	syscall
+#	la $a0, cond0
+#	li $v0, 4
+#	syscall
 	j Return
 
 Cond1:
 	addi $v1, $zero, 0
-	la $a0, cond1
-	li $v0, 4
-	syscall
+#	la $a0, cond1
+#	li $v0, 4
+#	syscall
 	j Return
 
 Cond2:
 	addi $v1, $zero, 2
-	la $a0, cond2
-	li $v0, 4
-	syscall
+#	la $a0, cond2
+#	li $v0, 4
+#	syscall
 	j Return
 
 Cond3:
-	la $a0, cond3
-	li $v0, 4
-	syscall
+#	la $a0, cond3
+#	li $v0, 4
+#	syscall
 # 3 * fn(x - 1, y)
 addi $a0, $a0, -1
 jal Fn
@@ -146,18 +162,52 @@ Re:
 	beq $t0, 1, re_cond1
 	
 	re_cond0:
+		addi $t3, $a0, 0
+		# Test
+		la $a0, testCond0
+		li $v0, 4
+		syscall
+		
 		# Calculate Re(n-1)
+		addi $a0, $t3, 0
 		addi $a0, $a0, -1
+		
+		# Print Int
+		li $v0, 1
+		syscall
+		
 		jal Re
 		lw $a0, 0($sp)
 		addi $s0, $v1, 0
 		sw $s0, 4($sp)
-
+		
+		# Print Res
+		# addi $t3, $a0, 0
+		la $a0, sep
+		li $v0, 4
+		syscall
+		addi $a0, $v1, 0
+		li $v0, 1
+		syscall
+		addi $a0, $t3, 0
+		#####################
+		addi $t4, $a0, 0
+		# Test
+		la $a0, testCond1
+		li $v0, 4
+		syscall
+		
 		# Calculate Re(n-2)
+		addi $a0, $t4, 0
 		addi $a0, $a0, -2
+		
+		# Print Int
+		li $v0, 1
+		syscall
+		
 		jal Re
 		lw $a0, 0($sp)
-		addi $s0, $v1, 0
+		addi $s1, $v1, 0
 		sw $s1, 8($sp)
 		
 		lw $s0, 4($sp)
