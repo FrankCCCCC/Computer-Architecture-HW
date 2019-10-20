@@ -115,7 +115,7 @@ beq $t0, 0, Cond0
 slt $t0, $zero, $a1
 beq $t0, 0, Cond1
 
-slt $0, $a1, $a0
+slt $t0, $a1, $a0
 beq $t0, 1, Cond2
 
 j Cond3
@@ -207,6 +207,7 @@ Re:
 		# la $a0, testCond0
 		# li $v0, 4
 		# syscall
+		# lw $a0, 4($sp)
 		
 		# Calculate Re(n-1)
 		# addi $a0, $t3, 0
@@ -269,7 +270,7 @@ Re:
 		lw $s1, 12($sp)
 		mul $t1, $a0, $a0 # $t1 = x * x
 		mul $t2, $a0, $s0 # $t2 = x * re(x - 1)
-		add $t3, $t3, -1  # $t3 = (x - 1)
+		add $t3, $a0, -1  # $t3 = (x - 1)
 		mul $t3, $t3, $s1 # $t3 = (x - 1) * re(x - 2)
 		
 		add $v1, $t1, $t2
@@ -281,9 +282,10 @@ Re:
 		bne $a0, 1, re_cond11
 			re_cond10:
 				addi $v1, $zero, 1
+				j re_return
 			re_cond11:
 				addi $v1, $zero, 0
-			j re_return
+				j re_return
 	re_return:
 	lw $s1, 12($sp) # Save $s1, as Re(x - 2)
 	lw $s0, 8($sp) # Save $s0, as Re(x - 1)

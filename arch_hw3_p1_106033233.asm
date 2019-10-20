@@ -36,22 +36,26 @@ li $v0, 5
 syscall
 addi $s2, $v0, 0
 
-# Call abs_sub function
-addi $a0, $s0, 0
-addi $a1, $s1, 0
-jal Abs_sub
-addi $a0, $v1, 0
-li $v0, 1
-syscall
-
-la $a0, newline
-li $v0, 4
-syscall
-
 # Call madd function
 addi $a0, $s0, 0
-addi $a1, $s1, 0
+addi $a1, $s2, 0
 jal Madd
+addi $s2, $v1, 0
+# addi $a0, $v1, 0
+# li $v0, 1
+# syscall
+
+# la $a0, newline
+# li $v0, 4
+# syscall
+
+# Call abs_sub function
+addi $a0, $s1, 0
+addi $a1, $s2, 0
+jal Abs_sub
+la $a0, res
+li $v0, 4
+syscall
 addi $a0, $v1, 0
 li $v0, 1
 syscall
