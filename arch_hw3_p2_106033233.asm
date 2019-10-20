@@ -33,30 +33,69 @@ syscall
 addi $s1, $v0, 0
 
 # Test Fn functiom
-addi $a0, $s0, 0
-addi $a1, $s1, 0
-jal Fn
-la $a0, ans
-li $v0, 4
-syscall
-addi $a0, $v1, 0
-li $v0, 1
-syscall
+# addi $a0, $s0, 0
+# addi $a1, $s1, 0
+# jal Fn
+# la $a0, ans
+# li $v0, 4
+# syscall
+# addi $a0, $v1, 0
+# li $v0, 1
+# syscall
 
 # Newline
-la $a0, newline
-li $v0, 4
-syscall
+# la $a0, newline
+# li $v0, 4
+# syscall
 
 # Test re functiom
+# addi $a0, $s0, 0
+# jal Re
+# la $a0, ans
+# li $v0, 4
+# syscall
+# addi $a0, $v1, 0
+# li $v0, 1
+# syscall
+
+addi $sp, $sp, -16
+sw $s3, 12($sp)
+sw $s2, 8($sp)
+sw $s1, 4($sp)
+sw $s0, 0($sp)
+
 addi $a0, $s0, 0
-jal Re
+jal Re # Call c = re(a)
+lw $s3, 12($sp)
+lw $s2, 8($sp)
+lw $s1, 4($sp)
+lw $s0, 0($sp)
+addi $s2, $v1, 0
+sw $s2, 8($sp)
+
 la $a0, ans
 li $v0, 4
-syscall
-addi $a0, $v1, 0
+syscall # Print("ans: ")
+addi $a0, $s2, 0
 li $v0, 1
-syscall
+syscall  # Print(d)
+
+addi $a0, $s1, 0
+addi $a1, $s2, 0
+jal Fn # Call d = Fn(b, c)
+lw $s3, 12($sp)
+lw $s2, 8($sp)
+lw $s1, 4($sp)
+lw $s0, 0($sp)
+addi $s3, $v1, 0
+sw $s3, 12($sp)
+
+la $a0, ans
+li $v0, 4
+syscall # Print("ans: ")
+addi $a0, $s3, 0
+li $v0, 1
+syscall # Print(d)
 
 j Exit
 
@@ -253,3 +292,8 @@ Re:
 	addi $sp, $sp, 16
 	jr $ra
 Exit:
+	lw $s3, 12($sp)
+	lw $s2, 8($sp)
+	lw $s1, 4($sp)
+	lw $s0, 0($sp)
+	addi $sp, $sp, 16
