@@ -102,6 +102,11 @@ class Cache{
         this->associativity = stoi(line_buffer);
 
         this->cache_size = this->cache_sets * this->associativity;
+        for (int i = 0; i < this->cache_size; i++){
+            valid_bits.push_back(false);
+            nru_table.push_back(true);
+        }
+        
     }
 
     bool setup(){
@@ -113,31 +118,69 @@ class Cache{
         return true;
     }
 
-    bool hit_policy(){
-        
+    bool nru_hit_policy(int idx){
+        this->nru_table[idx] = false;
+        return true;
     }
 
     bool hit(std::vector<bool> target_vb){
         int target = vbtoi(trim_offset(target_vb, this->offset_bit_count));
-        int temp_address;
         if(this->cache_sets > 0){
             int set_index  = target % this->cache_sets;
             for(int i=this->associativity * set_index; i<this->associativity * (set_index + 1); i++){
-                if(this->cache_entry[i] == target){return true;}
+                if(this->cache_entry[i] == target && this->valid_bits[i]){nru_hit_policy(i); return true;}
             }
             return false;
         }else{
             for(int i=0; i<this->cache_size; i++){
-                if(this->cache_entry[i] == target){return true;}
+                if(this->cache_entry[i] == target && this->valid_bits[i]){nru_hit_policy(i); return true;}
             }
             return false;
         }
         
     }
 
-    bool replace(std::vector<bool> address){
+    bool replace(std::vector<bool> target_vb){
         // NRU Policy
-
+        int target = vbtoi(trim_offset(target_vb, this->offset_bit_count));
+        bool re = false;
+        if(this->cache_sets > 0){
+            int set_index  = target % this->cache_sets;
+            int start_idx = this->associativity * set_index;
+            int end_idx = this->associativity * (set_index + 1);
+            for(int i=start_idx; i<end_idx; i++){
+                if(this->nru_table[i] == true){
+                    this->nru_table[i] = false;
+                    this->valid_bits[i] = true;
+                    this->cache_entry[i] = target;
+                    return true;
+                }
+            }
+            for(int i=start_idx; i<end_idx; i++){
+                this->nru_table[i] = true;
+            }
+            this->nru_table[start_idx] = false;
+            this->valid_bits[start_idx] = true;
+            this->cache_entry[start_idx] = target;
+            return true;
+        }else{
+            for(int i=0; i<this->cache_size; i++){
+                if(this->nru_table[i] == true){
+                    this->nru_table[i] = false;
+                    this->valid_bits[i] = true;
+                    this->cache_entry[i] = target;
+                    return true;
+                }
+            }
+            for(int i=0; i<this->cache_size; i++){
+                this->nru_table[i] = true;
+            }
+            this->nru_table[0] = false;
+            this->valid_bits[0] = true;
+            this->cache_entry[0] = target;
+            return true;
+        }
+        return false;
     }
 
     bool fetch(std::vector<bool> target_address){
@@ -182,7 +225,8 @@ class Cache{
     int indexing_bit_count;
     std::vector<int> indexing_bits;
     std::vector<int> cache_entry;
-
+    std::vector<bool> valid_bits;
+    std::vector<bool> nru_table;
 };
 
 
