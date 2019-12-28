@@ -39,14 +39,14 @@ vector<vector<int> > makeCombi(int n, int k)
 int main() 
 { 
     // given number 
-    int n = 5; 
-    int k = 3; 
+    int n = 32; 
+    int k = 16; 
     vector<vector<int> > ans = makeCombi(n, k); 
     for (int i = 0; i < ans.size(); i++) { 
-        for (int j = 0; j < ans[i].size(); j++) { 
-            cout << ans.at(i).at(j) << " "; 
-        } 
-        cout << endl; 
+        // for (int j = 0; j < ans[i].size(); j++) { 
+        //     cout << ans.at(i).at(j) << " "; 
+        // } 
+        // cout << endl;
     }
     cout << ans.size() << endl;
     return 0; 
